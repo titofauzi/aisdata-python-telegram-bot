@@ -39,9 +39,21 @@ def vesselinfo(bot, update, args):
 	print(res[0])
 
 	for value in res :
-		update.message.reply_text(value[0] + value[1])
+		text = '''MMSI : {}
+		Name : {}
+		Coordinate: {}, {}
+		Destination : {}
+		ETA : {}
+		SOG : {}
+		COG : {}
+		Date : {}
+		Country : {}'''.format(value[0], value[1], value[2] , value[3], value[4], value[5], value[6], value[7], value[10], value[12])
 
-	
+		update.message.reply_text(text)
+		update.message.reply_location(value[2], value[3])
+
+
+
 def main() :
 	logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
 	print('bot start')

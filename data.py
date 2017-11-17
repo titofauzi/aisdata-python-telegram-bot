@@ -19,7 +19,7 @@ class VesselInfo :
 		connection = self.init_db()
 		cursor = connection.cursor()
 		cursor.execute("""
-		    SELECT mmsi, name, lon, lat, destination, eta, sog, cog, size_a, size_b,
+		    SELECT mmsi, name, lat, lon, destination, eta, sog, cog, size_a, size_b,
 				to_char(last_posdate,'FMMonth ddth, YYYY HH24:MI:SS') last_posdate_,
 				to_char(last_posdate,'Day') day  
 					, (SELECT name from COUNTRYMID WHERE COUNTRYMID.ID = SUBSTR(vessel_info.mmsi,1,3)) country
