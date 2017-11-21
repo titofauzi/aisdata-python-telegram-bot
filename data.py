@@ -3,7 +3,7 @@ from configparser import ConfigParser
 
 class VesselInfo :
 
-	def __init__(self,mmsi) :
+	def __init__(self,mmsi = None) :
 		self.mmsi = mmsi
 
 	def init_db(self) :
@@ -27,4 +27,24 @@ class VesselInfo :
 		    mmsi = self.mmsi
 		   )
 		return cursor
+
+	def get_vessel_info_by_keyword(self, arg_keyword) :
+		connection = self.init_db()
+		cursor = connection.cursor()
+		cursor.arraysize = 4
+		cursor.execute("""
+		    select mmsi, name, lon, lat, to_char((last_posdate + INTERVAL '7' HOUR),'DD-MM-YYYY HH24:MI:SS') last_posdate_ 
+				FROM vessel_info 
+				WHERE (upper(name) like upper('%' || :arg_keyword || '%') OR (MMSI LIKE '%' || :arg_keyword || '%'))
+				and rownum < 5 """,
+		    arg_keyword = arg_keyword
+		   )
+		return cursor
 		
+class LastPosdate :
+
+	def get_global_last_posdate(self) :
+		connection = VesselInfo.init_db(self)
+		cursor = connection.cursor()
+		cursor.execute("select * from view_get_last_posdate")
+		return cursor
