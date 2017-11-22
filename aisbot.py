@@ -30,7 +30,7 @@ def vesselinfo(bot, update, args):
 	v = VesselInfo(mmsi = args[0])
 	cursor = v.get_vessel_info()
 	res = cursor.fetchall()
-	print(res[0])
+	print(update)
 
 	for value in res :
 		text = '''
@@ -61,6 +61,7 @@ def globallastposdate(bot, update, args):
 
 def inlinequery(bot, update):
 	"""Handle the inline query."""
+	print(update)
 	query = update.inline_query.query
 	v = VesselInfo()
 	cursor = v.get_vessel_info_by_keyword(query)
@@ -81,7 +82,7 @@ def inlinequery(bot, update):
 
 	update.inline_query.answer(arr)
 
-def say_hello(bot, update, user_data, chat_data):
+def say_hello(bot, update, user_data, chat_data, update_queue):
 	v = VesselInfo(mmsi = update.chosen_inline_result.result_id)
 	cursor = v.get_vessel_info()
 	res = cursor.fetchall()
@@ -99,8 +100,10 @@ def say_hello(bot, update, user_data, chat_data):
 		Country : {}'''.format(value[0], value[1], value[2] , value[3], value[4], value[5], value[6], value[7], value[10], value[12])
 
 		#update.message.reply_text(text = text)
+		print(bot)
 		print(update)
-		bot.send_message( text = text)
+		print(update_queue)
+		bot.send_message(update._effective_user.id, text = text)
     	
 def main() :
 	logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',level=logging.INFO)
@@ -108,7 +111,7 @@ def main() :
 	updater.dispatcher.add_handler(CommandHandler('mmsi', vesselinfo,  None, False, True))
 	updater.dispatcher.add_handler(CommandHandler('globallastposdate', globallastposdate,  None, False, pass_args = True))
 	updater.dispatcher.add_handler(InlineQueryHandler(inlinequery))
-	updater.dispatcher.add_handler(ChosenInlineResultHandler(say_hello, pass_user_data = True, pass_chat_data = True))
+	updater.dispatcher.add_handler(ChosenInlineResultHandler(say_hello, pass_user_data = True, pass_chat_data = True, pass_update_queue = True))
 	updater.start_polling()
 	updater.idle()
 
