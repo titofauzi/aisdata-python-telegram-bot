@@ -82,7 +82,7 @@ def inlinequery(bot, update):
 
 	update.inline_query.answer(arr)
 
-def say_hello(bot, update, user_data, chat_data, update_queue):
+def process_chosen(bot, update, user_data, chat_data, update_queue):
 	v = VesselInfo(mmsi = update.chosen_inline_result.result_id)
 	cursor = v.get_vessel_info()
 	res = cursor.fetchall()
@@ -111,7 +111,7 @@ def main() :
 	updater.dispatcher.add_handler(CommandHandler('mmsi', vesselinfo,  None, False, True))
 	updater.dispatcher.add_handler(CommandHandler('globallastposdate', globallastposdate,  None, False, pass_args = True))
 	updater.dispatcher.add_handler(InlineQueryHandler(inlinequery))
-	updater.dispatcher.add_handler(ChosenInlineResultHandler(say_hello, pass_user_data = True, pass_chat_data = True, pass_update_queue = True))
+	updater.dispatcher.add_handler(ChosenInlineResultHandler(process_chosen, pass_user_data = True, pass_chat_data = True, pass_update_queue = True))
 	updater.start_polling()
 	updater.idle()
 
